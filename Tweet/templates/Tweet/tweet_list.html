@@ -1,0 +1,118 @@
+{% extends 'layout.html' %}
+
+{% block title %}Tweet List{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Welcome to Hollywood Industry</h1>
+    
+    <!-- Search Form -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-8">
+            <form method="get" action="{% url 'search' %}">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" 
+                           placeholder="Search tweets or users..." 
+                           value="{{ query|default:'' }}">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                    {% if query %}
+                    <a href="{% url 'tweet_list' %}" class="btn btn-secondary">
+                        Clear
+                    </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Search Results Info -->
+    {% if query %}
+    <div class="row justify-content-center mb-3">
+        <div class="col-md-8">
+            <p class="text-muted">
+                Search results for: <strong>"{{ query }}"</strong>
+                {% if tweets.count == 0 %}
+                - No tweets found
+                {% else %}
+                - Found {{ tweets.count }} tweet{{ tweets.count|pluralize }}
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Create Tweet Button -->
+    <div class="text-center mb-4">
+        <a href="{% url 'tweet_create' %}" class="btn btn-primary btn-lg">
+            ➕ Create New Tweet
+        </a>
+    </div>
+
+    <!-- Tweet Cards -->
+    <div class="row">
+        {% for tweet in tweets %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow">
+                <!-- Tweet Image -->
+                {% if tweet.photo %}
+                <div class="text-center">
+                    <img src="{{ tweet.photo.url }}" class="card-img-top" alt="Tweet image" style="height: 250px; object-fit: contain; background-color: #f8f9fa; padding: 10px;">
+                </div>
+                {% endif %}
+                
+                <div class="card-body">
+                    <!-- Username -->
+                    <h5 class="card-title">@{{ tweet.user.username }}</h5>
+                    
+                    <!-- Tweet Text -->
+                    <p class="card-text">{{ tweet.text }}</p>
+                    
+                    <!-- Timestamp -->
+                    <p class="text-muted small">
+                        {{ tweet.created_at|timesince }} ago
+                    </p>
+                </div>
+                
+                <!-- Edit/Delete Buttons - Only show for tweet owner -->
+                {% if tweet.user == request.user %}
+                <div class="card-footer">
+                    <a href="{% url 'tweet_edit' tweet.id %}" class="btn btn-warning btn-sm">✏️ Edit</a>
+                    <a href="{% url 'tweet_delete' tweet.id %}" class="btn btn-danger btn-sm">🗑️ Delete</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <!-- Empty State -->
+        <div class="col-12 text-center">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">No tweets yet</h5>
+                    <p class="card-text">Be the first to create a tweet!</p>
+                    <a href="{% url 'tweet_create' %}" class="btn btn-primary">Create First Tweet</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .card {
+        border: 1px solid rgba(0,0,0,.125);
+        border-radius: 0.75rem;
+    }
+    
+    .card-img-top {
+        object-fit: contain;
+        background-color: #f8f9fa;
+    }
+    
+    .card-footer {
+        background-color: rgba(0,0,0,.03);
+        border-top: 1px solid rgba(0,0,0,.125);
+    }
+</style>
+{% endblock %}

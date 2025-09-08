@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <title>
+        {% block title %}
+            Hollywood
+        {% endblock %}
+    </title>
+    <style>
+        .navbar-brand-centered {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <!-- Centered Tweetbar -->
+            <a class="navbar-brand navbar-brand-centered" href="#">
+                <span class="fs-3 fw-bold text-warning">Tweetbar</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <!-- Empty left side to help center the brand -->
+                <div class="me-auto"></div>
+                
+                <!-- Right side buttons -->
+                <div class="d-flex align-items-center">
+                    <a href="{% url 'tweet_list' %}" class="btn btn-primary me-2">Tweet Home</a>
+                    
+                    {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'logout' %}" class="d-inline"> 
+                        {% csrf_token %}
+                        <button class='btn btn-danger' type="submit">Logout</button>
+                    </form>
+                    {% else %}
+                    <a href="{% url 'register' %}" class="btn btn-primary me-2">Register</a>
+                    <a href="{% url 'login' %}" class="btn btn-success">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container"> 
+        {% block content %}
+        
+        {% endblock %}
+    </div>
+
+</body>
+</html>
