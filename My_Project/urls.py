@@ -25,5 +25,5 @@ urlpatterns = [
 	path('admin/', admin.site.urls),
     path('', include('Tweet.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('tweet_list', RedirectView.as_view(url = '/tweet_list/', permanent=True))
+    # path('tweet_list', RedirectView.as_view(url = '/tweet_list/', permanent=True))
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

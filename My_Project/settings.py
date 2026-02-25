@@ -4,18 +4,16 @@ Django settings for My_Project project.
 
 from pathlib import Path
 import os
-import dj_database_url
 from dotenv import load_dotenv
 
 load_dotenv()  # Load .env file
 load_dotenv('.env.local')  
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-key')
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.vercel.app']
+DEBUG = os.environ.get('DEBUG', 'True') == 'False'
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.vercel.app', 'django-twitter-clone.vercel.app']
 
 # Application definition
 INSTALLED_APPS = [
@@ -58,34 +56,28 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'My_Project.wsgi.application'
 
-# DATABASE CONFIGURATION
-database_url = os.environ.get('DATABASE_URL') or os.environ.get('STORAGE_URL')
-
-if database_url:
-    print(f"✅ Database URL found (starts with: {database_url[:20]}...)")
-    DATABASES = {
-        'default': dj_database_url.parse(
-            database_url,
-            conn_max_age=600,
-            conn_health_checks=True,
-            ssl_require=True,
-        )
+# DATABASE CONFIGURATION - ALWAYS USE SQLITE
+print("📦 Using SQLite database")
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-else:
-    print("⚠️ No database URL found, using SQLite")
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
 
-# Rest of your settings...
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
-    # ... rest of validators
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
 ]
 
 # Internationalization
@@ -110,5 +102,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/accounts/login'
 LOGIN_REDIRECT_URL = '/Tweet/tweet_list'
 LOGOUT_REDIRECT_URL = '/Tweet/tweet_list'
-
-# You can remove the debug prints at the bottom now
