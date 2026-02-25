@@ -12,3 +12,5 @@ venv/
 .DS_Store
 *.swp
 *.swo
+.vercel
+.env*.local
